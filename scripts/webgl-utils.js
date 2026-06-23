@@ -1,7 +1,4 @@
 /**
- * Obtém o contexto WebGL do canvas.
- * Tenta "webgl" e cai para "experimental-webgl" em browsers antigos.
- *
  * @param {HTMLCanvasElement} canvas
  * @returns {WebGLRenderingContext|null}
  */
@@ -16,16 +13,10 @@ function getGL(canvas) {
   return null;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SHADERS
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
- * Compila um shader GLSL.
- *
  * @param {WebGLRenderingContext} gl
- * @param {number} shaderType  gl.VERTEX_SHADER ou gl.FRAGMENT_SHADER
- * @param {string} shaderSrc   código GLSL como string
+ * @param {number} shaderType
+ * @param {string} shaderSrc
  * @returns {WebGLShader|undefined}
  */
 function createShader(gl, shaderType, shaderSrc) {
@@ -37,7 +28,6 @@ function createShader(gl, shaderType, shaderSrc) {
     return shader;
   }
 
-  // Erro de compilação — imprime o log completo no console para facilitar debug
   var errorLog = gl.getShaderInfoLog(shader);
   console.error("Erro de compilação no shader:\n" + errorLog);
   alert("Erro de compilação no shader. Veja o console (F12) para detalhes.");
@@ -45,8 +35,6 @@ function createShader(gl, shaderType, shaderSrc) {
 }
 
 /**
- * Cria e linka um programa WebGL a partir de vertex + fragment shaders.
- *
  * @param {WebGLRenderingContext} gl
  * @param {WebGLShader} vtxShader
  * @param {WebGLShader} fragShader
@@ -68,23 +56,15 @@ function createProgram(gl, vtxShader, fragShader) {
   gl.deleteProgram(prog);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MATRIZES DE CÂMERA E PROJEÇÃO
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
- * Cria a matriz de projeção perspectiva.
- *
- * @param {number} fovy    Campo de visão vertical em GRAUS (ex: 70 para FPS)
- * @param {number} aspect  Razão largura/altura do canvas
- * @param {number} near    Plano de corte próximo (ex: 0.1)
- * @param {number} far     Plano de corte distante (ex: 100)
- * @returns {math.Matrix}  Matriz 4×4
+ * @param {number} fovy
+ * @param {number} aspect
+ * @param {number} near
+ * @param {number} far
+ * @returns {math.Matrix}
  */
 function createPerspective(fovy, aspect, near, far) {
-  fovy = (fovy * Math.PI) / 180.0; // ← Math (maiúsculo) — API nativa do JS
-  //   O código original usava math.tan (minúsculo)
-  //   do math.js, o que causava erro silencioso.
+  fovy = (fovy * Math.PI) / 180.0;
 
   var fy = 1.0 / Math.tan(fovy / 2.0);
   var fx = fy / aspect;
@@ -100,28 +80,21 @@ function createPerspective(fovy, aspect, near, far) {
 }
 
 /**
- * Cria a matriz View (câmera look-at).
- * Transforma coordenadas do mundo para coordenadas de câmera.
- *
- * @param {number[]} pos     Posição da câmera [x, y, z]
- * @param {number[]} target  Ponto para onde a câmera está olhando [x, y, z]
- * @param {number[]} up      Vetor "cima" do mundo — normalmente [0, 1, 0]
- * @returns {math.Matrix}    Matriz 4×4
+ * @param {number[]} pos
+ * @param {number[]} target
+ * @param {number[]} up
+ * @returns {math.Matrix}
  */
 function createCamera(pos, target, up) {
-  // eixo Z da câmera aponta para TRÁS (de target até pos — convenção OpenGL)
   var zc = math.subtract(pos, target);
   zc = math.divide(zc, math.norm(zc));
 
-  // eixo X: perpendicular ao plano formado por up e zc
   var xc = math.cross(up, zc);
   xc = math.divide(xc, math.norm(xc));
 
-  // eixo Y: perpendicular a xc e zc (re-ortogonalizado)
   var yc = math.cross(zc, xc);
   yc = math.divide(yc, math.norm(yc));
 
-  // Monta a matriz de rotação da câmera (linhas = eixos do espaço de câmera)
   var rot = math.matrix([
     [xc[0], xc[1], xc[2], 0.0],
     [yc[0], yc[1], yc[2], 0.0],
@@ -129,7 +102,6 @@ function createCamera(pos, target, up) {
     [0.0, 0.0, 0.0, 1.0],
   ]);
 
-  // Translação inversa (move o mundo para a origem da câmera)
   var mov = math.matrix([
     [1.0, 0.0, 0.0, -pos[0]],
     [0.0, 1.0, 0.0, -pos[1]],
@@ -137,15 +109,9 @@ function createCamera(pos, target, up) {
     [0.0, 0.0, 0.0, 1.0],
   ]);
 
-  // View = Rotação × Translação
   return math.multiply(rot, mov);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HELPERS PARA MATRIZES DE TRANSFORMAÇÃO
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Matriz identidade 4×4 */
 function mat4Identity() {
   return math.matrix([
     [1, 0, 0, 0],
@@ -155,7 +121,6 @@ function mat4Identity() {
   ]);
 }
 
-/** Translação */
 function mat4Translate(tx, ty, tz) {
   return math.matrix([
     [1, 0, 0, tx],
@@ -165,7 +130,6 @@ function mat4Translate(tx, ty, tz) {
   ]);
 }
 
-/** Escala */
 function mat4Scale(sx, sy, sz) {
   return math.matrix([
     [sx, 0, 0, 0],
@@ -175,7 +139,6 @@ function mat4Scale(sx, sy, sz) {
   ]);
 }
 
-/** Rotação em torno do eixo Y (yaw — mais usada em câmera FPS) */
 function mat4RotY(angleRad) {
   var c = Math.cos(angleRad),
     s = Math.sin(angleRad);
@@ -187,7 +150,6 @@ function mat4RotY(angleRad) {
   ]);
 }
 
-/** Rotação em torno do eixo X (pitch) */
 function mat4RotX(angleRad) {
   var c = Math.cos(angleRad),
     s = Math.sin(angleRad);
@@ -199,7 +161,6 @@ function mat4RotX(angleRad) {
   ]);
 }
 
-/** Rotação em torno do eixo Z (roll) */
 function mat4RotZ(angleRad) {
   var c = Math.cos(angleRad),
     s = Math.sin(angleRad);
@@ -211,16 +172,7 @@ function mat4RotZ(angleRad) {
   ]);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HELPERS PARA ENVIO DE DADOS AO SHADER
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
- * Converte uma math.Matrix 4×4 para um Float32Array column-major,
- * formato exigido por gl.uniformMatrix4fv.
- *
- * math.js armazena row-major, WebGL espera column-major → transpose antes de flatten.
- *
  * @param {math.Matrix} mat
  * @returns {number[]}
  */
@@ -229,14 +181,12 @@ function matToGL(mat) {
 }
 
 /**
- * Conecta um atributo do vertex shader ao buffer ARRAY_BUFFER atualmente ativo.
- *
  * @param {WebGLRenderingContext} gl
  * @param {WebGLProgram} prog
- * @param {string} name     Nome do atributo no GLSL (ex: "position")
- * @param {number} size     Quantidade de floats por vértice (2, 3 ou 4)
- * @param {number} stride   Bytes por vértice completo (ex: 8*4 = 32)
- * @param {number} offset   Byte de início deste atributo dentro do vértice
+ * @param {string} name
+ * @param {number} size
+ * @param {number} stride
+ * @param {number} offset
  */
 function connectAttrib(gl, prog, name, size, stride, offset) {
   var ptr = gl.getAttribLocation(prog, name);
@@ -251,12 +201,10 @@ function connectAttrib(gl, prog, name, size, stride, offset) {
 }
 
 /**
- * Carrega uma imagem e cria uma textura WebGL.
- *
  * @param {WebGLRenderingContext} gl
- * @param {string} src      Caminho da imagem (ex: "/assets/textures/wall.jpg")
- * @param {number} unit     Unidade de textura (0 para TEXTURE0, 1 para TEXTURE1…)
- * @param {function} onLoad Callback chamado com a textura quando estiver pronta
+ * @param {string} src
+ * @param {number} unit
+ * @param {function} onLoad
  */
 function loadTexture(gl, src, unit, onLoad) {
   var img = new Image();
