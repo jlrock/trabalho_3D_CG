@@ -13,45 +13,54 @@ const camera = {
   },
 
   getRight() {
-    const front = this.getFront();
-    const up = [0, 1, 0];
-    const right = math.cross(front, up);
-    return math.divide(right, math.norm(right));
+    var f = this.getFront();
+    var len = Math.sqrt(f[0] * f[0] + f[2] * f[2]);
+    if (len < 0.0001) return [1, 0, 0];
+    return [-f[2] / len, 0, f[0] / len];
   },
 
-  move(keys) {
-    const front = this.getFront();
-    const right = this.getRight();
-    const frontXZ = math.divide(
-      [front[0], 0, front[2]],
-      math.norm([front[0], 0, front[2]]),
+  move(dt) {
+    var f = this.getFront();
+    var r = this.getRight();
+    var dist = this.speed * dt;
+
+    var fLen = Math.sqrt(f[0] * f[0] + f[2] * f[2]);
+    var fx = fLen > 0.0001 ? f[0] / fLen : 0;
+    var fz = fLen > 0.0001 ? f[2] / fLen : 0;
+
+    if (keys["w"] || keys["arrowup"]) {
+      this.pos[0] += fx * dist;
+      this.pos[2] += fz * dist;
+    }
+    if (keys["s"] || keys["arrowdown"]) {
+      this.pos[0] -= fx * dist;
+      this.pos[2] -= fz * dist;
+    }
+    if (keys["a"] || keys["arrowleft"]) {
+      this.pos[0] -= r[0] * dist;
+      this.pos[2] -= r[2] * dist;
+    }
+    if (keys["d"] || keys["arrowright"]) {
+      this.pos[0] += r[0] * dist;
+      this.pos[2] += r[2] * dist;
+    }
+  },
+
+  look(dx, dy) {
+    this.yaw -= dx * 0.002;
+    this.pitch -= dy * 0.002;
+    this.pitch = Math.max(
+      -Math.PI * 0.45,
+      Math.min(Math.PI * 0.45, this.pitch),
     );
-    if (keys["w"])
-      this.pos = math.add(this.pos, math.multiply(frontXZ, this.speed));
-    if (keys["s"])
-      this.pos = math.subtract(this.pos, math.multiply(frontXZ, this.speed));
-    if (keys["a"])
-      this.pos = math.subtract(this.pos, math.multiply(right, this.speed));
-    if (keys["d"])
-      this.pos = math.add(this.pos, math.multiply(right, this.speed));
-  },
-
-  look(dx, dy) {
-    this.yaw -= dx * 0.002;
-    this.pitch -= dy * 0.002;
-    this.pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, this.pitch));
-  },
-
-  look(dx, dy) {
-    this.yaw -= dx * 0.002;
-    this.pitch -= dy * 0.002;
-    this.pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, this.pitch));
   },
 
   getViewMatrix() {
-    const front = this.getFront();
-    const target = math.add(this.pos, front);
-    const up = [0, 1, 0];
-    return createCamera(this.pos, target, up);
+    var f = this.getFront();
+    return createCamera(
+      this.pos,
+      [this.pos[0] + f[0], this.pos[1] + f[1], this.pos[2] + f[2]],
+      [0, 1, 0],
+    );
   },
 };
