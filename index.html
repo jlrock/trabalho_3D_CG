@@ -4,8 +4,97 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Joguinho Sem Nome</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.2.0/math.min.js"></script>
+    <script src="/scripts/webgl-utils.js"></script>
+    <!-- <script src="/scripts/input.js"></script>
+    <script src="/scripts/camera.js"></script>
+    <script src="/scripts/obj-loader.js"></script>
+    <script src="/scripts/scene.js"></script>
+    <script src="/scripts/game.js"></script> -->
+    <script src="/scripts/main.js"></script>
+
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 position;
+      attribute vec2 texCoord;
+      attribute vec3 normal;
+
+      uniform mat4 transfproj;  /* Projection × View × Model */
+      uniform mat4 transf;      /* só Model — para transformar normais */
+      uniform vec3 lightpos;    /* posição da fonte de luz no mundo */
+      uniform vec3 campos;      /* posição da câmera no mundo */
+
+      varying vec2 v_texCoord;
+      varying vec3 v_normal;
+      varying vec3 pointToLight;
+      varying vec3 pointToCam;
+
+      void main() {
+          /* Vetores calculados no espaço do mundo, interpolados pelo rasterizador */
+          pointToLight = lightpos - position.xyz;
+          pointToCam   = campos   - position.xyz;
+
+          /* Transforma a normal pelo mesmo Model da geometria */
+          v_normal   = (transf * vec4(normal, 1.0)).xyz;
+          v_texCoord = texCoord;
+
+          gl_Position = transfproj * position;
+      }
+    </script>
+
+    <script id="frag-shader" type="notjs">
+      precision mediump float;
+
+      uniform sampler2D tex;
+      uniform vec3 lightDirection;  /* direção da luz direcional global */
+      uniform vec3 lightColor;      /* cor/intensidade da luz */
+
+      /* Suporte a cor sólida (para o monstro, sem textura) */
+      uniform bool useSolidColor;
+      uniform vec3 solidColor;
+
+      varying vec2 v_texCoord;
+      varying vec3 v_normal;
+      varying vec3 pointToLight;
+      varying vec3 pointToCam;
+
+      void main() {
+          vec3 pToLight = normalize(pointToLight);
+          vec3 pToCam   = normalize(pointToCam);
+          vec3 halfVec  = normalize(pToCam + pToLight);
+
+          vec3 v_normal_n       = normalize(v_normal);
+          vec3 lightDirection_n = normalize(-lightDirection);
+
+          /* Contribuições do modelo de Phong */
+          float lightd = max(dot(v_normal_n, lightDirection_n), 0.0); /* difuso direcional */
+          float lightp = max(dot(v_normal_n, pToLight),         0.0); /* difuso ponto      */
+          float lighte = max(dot(v_normal_n, halfVec),          0.0); /* especular         */
+
+          /* Escolhe entre textura ou cor sólida */
+          vec3 baseColor;
+          float alpha;
+          if (useSolidColor) {
+              baseColor = solidColor;
+              alpha = 1.0;
+          } else {
+              vec4 texSample = texture2D(tex, v_texCoord);
+              baseColor = texSample.rgb;
+              alpha     = texSample.a;
+          }
+
+          /* Phong completo: ambiente + difuso direcional + difuso ponto + especular */
+          gl_FragColor.rgb  = 0.20 * lightColor * baseColor;
+          gl_FragColor.rgb += 0.20 * lightColor * lightd * baseColor;
+          gl_FragColor.rgb += 0.50 * lightColor * lightp * baseColor;
+          gl_FragColor.rgb += lightColor * pow(lighte, 500.0) * baseColor;
+          gl_FragColor.a    = alpha;
+      }
+    </script>
   </head>
-  <body>
-    <h1>Hello World</h1>
+  <body onload="main()">
+    <canvas id="glcanvas1" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: block;"></canvas>
+    <p id="click-hint" style="color: #aaa; font-family: monospace">
+      Clique no canvas para capturar o mouse. ESC para soltar.
+    </p>
   </body>
 </html>
