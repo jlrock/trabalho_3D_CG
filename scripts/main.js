@@ -1,25 +1,12 @@
-/**
- * Módulos a integrar futuramente (TODOs marcados abaixo):
- *   obj-loader.js -> geometria carregada de arquivos .obj
- *   scene.js      -> substituir buildCorridor/drawCorridor por drawScene()
- *   game.js       -> lógica de coleta de chaves, game over, vitória
- */
 "use strict";
 
-// ESTADO GLOBAL
-
-var gl = null;
-var prog = null;
-
-var lastTime = 0; // timestamp do frame anterior em milissegundos
-var totalTime = 0; // tempo acumulado em segundos (animações)
-
-// Buffers de geometria criados na GPU
+var gl, prog;
+var lastTime = 0;
+var totalTime = 0;
 var corridorBuffer = null;
 var corridorCount = 0;
 var lampBuffer = null;
 var lampCount = 0;
-
 var lampSwing = 0.0;
 
 function main() {
@@ -28,7 +15,7 @@ function main() {
   buildCorridor();
   buildLampCube();
 
-  // Quando scene.js + obj-loader.js estiverem prontos):
+  // Quando scene.js + obj-loader.js estiverem prontos:
   // Substituir as duas linhas de build acima por:
   //   await initScene(gl, prog);
   // e mudar "function main()" para "async function main()"
@@ -53,7 +40,6 @@ function initGL() {
 
   gl.useProgram(prog);
 
-  // Configurações globais do pipeline
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clearColor(0.01, 0.01, 0.02, 1.0);
   gl.enable(gl.DEPTH_TEST);
@@ -63,24 +49,11 @@ function initGL() {
   gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [1.0, 0.85, 0.65]);
   gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
 
-  // Textura fallback 1×1 cinza em TEXTURE0 (usada até assets reais carregarem)
-  // Para trocar por textura real, use loadTexture() de webgl-utils.js:
-  //   loadTexture(gl, "/assets/textures/wall.jpg", 0, function() { ... });
   createFallbackTexture(0);
   return true;
 }
 
-// GEOMETRIA INLINE — CORREDOR DE TESTE
-//
-// Layout de cada vértice (interleaved, 8 floats = 32 bytes):
-//   bytes  0-11 : posição  XYZ  (3 * float32)
-//   bytes 12-19 : texcoord UV   (2 * float32)
-//   bytes 20-31 : normal   NxNyNz (3 * float32)
-//
-// Corredor: x ∈ [-2.5, 2.5], y ∈ [0, 3.5], z ∈ [-12, 5]
-//
-// depois dos testes, substituiremos buildCorridor() pelo carregamento via obj-loader.js
-
+// Testes
 function makeQuad(v0, v1, v2, v3, n, tu, tv) {
   return [
     // Triângulo 1: v0, v1, v2
@@ -201,8 +174,6 @@ function buildCorridor() {
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// GEOMETRIA INLINE - LANTERNA
 function buildLampCube() {
   var faces = [
     {
@@ -259,7 +230,6 @@ function buildLampCube() {
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 }
 
-// TEXTURA FALLBACK
 function createFallbackTexture(unit) {
   var tex = gl.createTexture();
   var data = new Uint8Array([180, 180, 180, 255]);
@@ -281,15 +251,12 @@ function createFallbackTexture(unit) {
   return tex;
 }
 
-// LOOP PRINCIPAL
 function gameLoop(timestamp) {
   var dt = Math.min((timestamp - lastTime) / 1000.0, 0.05);
   lastTime = timestamp;
   totalTime += dt;
-
   update(dt);
   render();
-
   requestAnimationFrame(gameLoop);
 }
 
@@ -323,17 +290,15 @@ function render() {
   // drawScene();
 }
 
-// HELPER DE DRAW - configura buffer
-
 /**
- * @param {WebGLBuffer}  buf        buffer interleaved (xyz uv nxnynz)
- * @param {number}       count      número de vértices
- * @param {math.Matrix}  modelMat   matriz Model 4×4 (posição/rotação/escala do objeto)
- * @param {math.Matrix}  projMat    matriz Projection 4×4 (saída de createPerspective)
- * @param {math.Matrix}  viewMat    matriz View 4×4 (saída de cam.getViewMatrix)
- * @param {number}       texUnit    índice da unidade de textura a usar (0, 1, 2…)
- * @param {boolean}      solidColor true => ignora textura e usa rgb abaixo
- * @param {number[]|null} rgb       [r,g,b] quando solidColor=true, senão null
+ * @param {WebGLBuffer}  buf
+ * @param {number}       count
+ * @param {math.Matrix}  modelMat
+ * @param {math.Matrix}  projMat
+ * @param {math.Matrix}  viewMat
+ * @param {number}       texUnit
+ * @param {boolean}      solidColor
+ * @param {number[]|null} rgb
  */
 function drawObject(
   buf,
@@ -354,9 +319,9 @@ function drawObject(
   }
 
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  connectAttrib(gl, prog, "position", 3, 32, 0); // bytes  0-11: XYZ
-  connectAttrib(gl, prog, "texCoord", 2, 32, 12); // bytes 12-19: UV
-  connectAttrib(gl, prog, "normal", 3, 32, 20); // bytes 20-31: NxNyNz
+  connectAttrib(gl, prog, "position", 3, 32, 0);
+  connectAttrib(gl, prog, "texCoord", 2, 32, 12);
+  connectAttrib(gl, prog, "normal", 3, 32, 20);
 
   gl.uniformMatrix4fv(
     gl.getUniformLocation(prog, "transf"),
@@ -375,7 +340,6 @@ function drawObject(
   gl.drawArrays(gl.TRIANGLES, 0, count);
 }
 
-// DRAW CALLS ESPECÍFICOS
 function drawCorridor(projMat, viewMat) {
   drawObject(
     corridorBuffer,
@@ -390,7 +354,6 @@ function drawCorridor(projMat, viewMat) {
 }
 
 function drawLamp(projMat, viewMat) {
-  // A lanterna está pendurada no teto do corredor, a 4m do fundo
   var scale = mat4Scale(0.2, 0.4, 0.2);
   var hang = mat4Translate(0.0, -0.35, 0.0);
   var swing = mat4RotZ((lampSwing * Math.PI) / 180.0);
