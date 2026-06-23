@@ -3,11 +3,6 @@
 var gl, prog;
 var totalTime = 0;
 var lastTime = 0;
-var corridorBuffer = null;
-var corridorCount = 0;
-var lampBuffer = null;
-var lampCount = 0;
-var lampSwing = 0.0;
 
 async function init() {
   var canvas = document.getElementById("glcanvas1");
@@ -31,7 +26,7 @@ async function init() {
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [1.0, 0.85, 0.65]);
+  gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [1.0, 1.0, 0.5]);
   gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
 
   createFallbackTexture(0);
@@ -59,7 +54,6 @@ function gameLoop(timestamp) {
 
 function update(dt) {
   camera.move(dt);
-  lampSwing = Math.sin(totalTime * 0.7) * 20.0;
 }
 
 function render() {
