@@ -1,8 +1,8 @@
 const camera = {
-  pos: [0.0, 1.7, 0.0],
+  pos: [0.0, 0.7, 0.0],
   yaw: Math.PI,
   pitch: 0.0,
-  speed: 5,
+  speed: 2.5,
 
   getFront() {
     return [
