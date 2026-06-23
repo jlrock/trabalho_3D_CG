@@ -1,6 +1,5 @@
 /**
  * Módulos a integrar futuramente (TODOs marcados abaixo):
- *   camera.js     -> substituir objeto "cam" inline
  *   obj-loader.js -> geometria carregada de arquivos .obj
  *   scene.js      -> substituir buildCorridor/drawCorridor por drawScene()
  *   game.js       -> lógica de coleta de chaves, game over, vitória
@@ -22,75 +21,6 @@ var lampBuffer = null;
 var lampCount = 0;
 
 var lampSwing = 0.0;
-
-// CÂMERA FPS INLINE
-// Mover para camera.js
-var cam = {
-  pos: [0.0, 1.7, 4.0],
-  yaw: Math.PI,
-  pitch: 0.0,
-  speed: 5,
-
-  getFront: function () {
-    return [
-      Math.cos(this.pitch) * Math.sin(this.yaw),
-      Math.sin(this.pitch),
-      Math.cos(this.pitch) * Math.cos(this.yaw),
-    ];
-  },
-
-  getRight: function () {
-    var f = this.getFront();
-    var len = Math.sqrt(f[0] * f[0] + f[2] * f[2]);
-    if (len < 0.0001) return [1, 0, 0];
-    return [-f[2] / len, 0, f[0] / len];
-  },
-
-  move: function (dt) {
-    var f = this.getFront();
-    var r = this.getRight();
-    var dist = this.speed * dt;
-
-    var fLen = Math.sqrt(f[0] * f[0] + f[2] * f[2]);
-    var fx = fLen > 0.0001 ? f[0] / fLen : 0;
-    var fz = fLen > 0.0001 ? f[2] / fLen : 0;
-
-    if (keys["w"] || keys["arrowup"]) {
-      this.pos[0] += fx * dist;
-      this.pos[2] += fz * dist;
-    }
-    if (keys["s"] || keys["arrowdown"]) {
-      this.pos[0] -= fx * dist;
-      this.pos[2] -= fz * dist;
-    }
-    if (keys["a"] || keys["arrowleft"]) {
-      this.pos[0] -= r[0] * dist;
-      this.pos[2] -= r[2] * dist;
-    }
-    if (keys["d"] || keys["arrowright"]) {
-      this.pos[0] += r[0] * dist;
-      this.pos[2] += r[2] * dist;
-    }
-  },
-
-  look: function (dx, dy) {
-    this.yaw -= dx * 0.002;
-    this.pitch -= dy * 0.002;
-    this.pitch = Math.max(
-      -Math.PI * 0.45,
-      Math.min(Math.PI * 0.45, this.pitch),
-    );
-  },
-
-  getViewMatrix: function () {
-    var f = this.getFront();
-    return createCamera(
-      this.pos,
-      [this.pos[0] + f[0], this.pos[1] + f[1], this.pos[2] + f[2]],
-      [0, 1, 0],
-    );
-  },
-};
 
 function main() {
   if (!initGL()) return;
@@ -364,7 +294,7 @@ function gameLoop(timestamp) {
 }
 
 function update(dt) {
-  cam.move(dt);
+  camera.move(dt);
   lampSwing = Math.sin(totalTime * 0.7) * 20.0;
 
   // quando game.js estiver pronto:
@@ -379,12 +309,12 @@ function render() {
 
   var aspect = gl.canvas.width / gl.canvas.height;
   var mproj = createPerspective(70.0, aspect, 0.1, 100.0);
-  var view = cam.getViewMatrix();
+  var view = camera.getViewMatrix();
 
-  var front = cam.getFront();
-  gl.uniform3fv(gl.getUniformLocation(prog, "lightpos"), cam.pos);
+  var front = camera.getFront();
+  gl.uniform3fv(gl.getUniformLocation(prog, "lightpos"), camera.pos);
   gl.uniform3fv(gl.getUniformLocation(prog, "lightDirection"), front);
-  gl.uniform3fv(gl.getUniformLocation(prog, "campos"), cam.pos);
+  gl.uniform3fv(gl.getUniformLocation(prog, "campos"), camera.pos);
 
   drawCorridor(mproj, view);
   drawLamp(mproj, view);

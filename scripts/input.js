@@ -47,7 +47,7 @@ function initInput() {
 
   document.addEventListener("mousemove", function (e) {
     if (document.pointerLockElement === canvas) {
-      cam.look(e.movementX, e.movementY);
+      camera.look(e.movementX, e.movementY);
     }
   });
 
