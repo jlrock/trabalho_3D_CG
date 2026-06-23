@@ -1,30 +1,5 @@
 const keys = {};
 
-document.addEventListener("keydown", (e) => {
-  keys[e.key.toLowerCase()] = true;
-});
-document.addEventListener("keyup", (e) => {
-  keys[e.key.toLowerCase()] = false;
-});
-
-const canvas = document.getElementById("glcanvas1");
-
-canvas.addEventListener("click", () => {
-  canvas.requestPointerLock();
-});
-
-document.addEventListener("mousemove", (e) => {
-  if (document.pointerLockElement === canvas) {
-    camera.look(e.movementX, e.movementY);
-  }
-});
-
-document.addEventListener("pointerlockchange", () => {
-  if (document.pointerLockElement === canvas) {
-    console.log("Mouse capturado — ESC para soltar");
-  }
-});
-
 function initInput() {
   document.addEventListener("keydown", function (e) {
     keys[e.key.toLowerCase()] = true;
@@ -36,11 +11,13 @@ function initInput() {
       e.preventDefault();
     }
   });
+
   document.addEventListener("keyup", function (e) {
     keys[e.key.toLowerCase()] = false;
   });
 
   var canvas = document.getElementById("glcanvas1");
+
   canvas.addEventListener("click", function () {
     canvas.requestPointerLock();
   });
