@@ -1,7 +1,6 @@
 "use strict";
 
 var gl, prog;
-var lastTime = 0;
 var totalTime = 0;
 var corridorBuffer = null;
 var corridorCount = 0;
@@ -9,18 +8,62 @@ var lampBuffer = null;
 var lampCount = 0;
 var lampSwing = 0.0;
 
-function main() {
-  if (!initGL()) return;
-  initInput();
-  buildCorridor();
-  buildLampCube();
+var gameState = "playing"; // "playing" | "gameover" | "win"
 
-  // Quando scene.js + obj-loader.js estiverem prontos:
-  // Substituir as duas linhas de build acima por:
-  //   await initScene(gl, prog);
-  // e mudar "function main()" para "async function main()"
+async function init() {
+  const canvas = document.getElementById("glcanvas1");
+  gl = getGL(canvas);
+  if (!gl) return;
+  
+  const vtxSrc = document.getElementById("vertex-shader").text;
+  const fragSrc = document.getElementById("frag-shader").text;
+  prog = createProgram(
+    gl,
+    createShader(gl, gl.VERTEX_SHADER, vtxSrc),
+    createShader(gl, gl.FRAGMENT_SHADER, fragSrc),
+  );
+  gl.useProgram(prog);
 
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  await setupScene();
+  setupInput();
+  
   requestAnimationFrame(gameLoop);
+}
+
+var lastTime = 0;
+function gameLoop(timestamp) {
+  const dt = (timestamp - lastTime) / 1000;
+  lastTime = timestamp;
+
+  if (gameState === "playing") {
+    camera.move(keys);
+    updateMonster(dt);
+    updateDoor();
+    checkCollectibles();
+    checkGameOver();
+  }
+
+  render();
+  requestAnimationFrame(gameLoop);
+}
+
+function render() {
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const aspect = gl.canvas.width / gl.canvas.height;
+  const mproj = createPerspective(70, aspect, 0.1, 100);
+  const viewMat = camera.getViewMatrix();
+
+  gl.uniform3fv(gl.getUniformLocation(prog, "lightpos"), camera.pos);
+  gl.uniform3fv(gl.getUniformLocation(prog, "campos"), camera.pos);
+
+  drawCorridor(mproj, viewMat);
 }
 
 function initGL() {
@@ -250,16 +293,6 @@ function createFallbackTexture(unit) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   return tex;
 }
-
-function gameLoop(timestamp) {
-  var dt = Math.min((timestamp - lastTime) / 1000.0, 0.05);
-  lastTime = timestamp;
-  totalTime += dt;
-  update(dt);
-  render();
-  requestAnimationFrame(gameLoop);
-}
-
 function update(dt) {
   camera.move(dt);
   lampSwing = Math.sin(totalTime * 0.7) * 20.0;
@@ -268,26 +301,6 @@ function update(dt) {
   // updateGame(); // lógica, vitória, derrota
   // updateScene(); // anima outros objetos
   // updateMonster(); // movimenta a entidade inimiga
-}
-
-// RENDER
-function render() {
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-  var aspect = gl.canvas.width / gl.canvas.height;
-  var mproj = createPerspective(70.0, aspect, 0.1, 100.0);
-  var view = camera.getViewMatrix();
-
-  var front = camera.getFront();
-  gl.uniform3fv(gl.getUniformLocation(prog, "lightpos"), camera.pos);
-  gl.uniform3fv(gl.getUniformLocation(prog, "lightDirection"), front);
-  gl.uniform3fv(gl.getUniformLocation(prog, "campos"), camera.pos);
-
-  drawCorridor(mproj, view);
-  drawLamp(mproj, view);
-
-  // quando scene.js estiver pronto:
-  // drawScene();
 }
 
 /**
