@@ -1,10 +1,9 @@
 var scene = {};
 
 async function setupScene() {
-  const mapParts = await loadOBJ("assets/models/backrooms.obj");
-
+  const mapParts = await loadOBJ("./../assets/models/backrooms.obj");
+  
   scene.parts = [];
-
   const carpetTex = loadTexture(gl, "assets/textures/carpet.jpeg", 0);
   const wallTex = loadTexture(gl, "assets/textures/wallpaper.jpeg", 1);
 

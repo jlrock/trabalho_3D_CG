@@ -69,3 +69,53 @@ async function loadOBJ(path) {
 
   return result;
 }
+
+function getHitboxFromOBJ(OBJ) {
+    const linhas = OBJ.split('\n');
+    const vertices = [];
+    const hitboxes = [];
+    const padding = 0.2;
+    const alturaMinimaParede = 0.5;
+
+    for (let linha of linhas) {
+        linha = linha.trim();
+        const partes = linha.split(/\s+/);
+
+        if (partes[0] === 'v') {
+            if (vertices.length === 0) vertices.push(null); 
+            vertices.push({
+                x: parseFloat(partes[1]),
+                y: parseFloat(partes[2]),
+                z: parseFloat(partes[3])
+            });
+        } 
+        else if (partes[0] === 'f') {
+            const idx1 = parseInt(partes[1].split('/')[0]);
+            const idx2 = parseInt(partes[2].split('/')[0]);
+            const idx3 = parseInt(partes[3].split('/')[0]);
+
+            const v1 = vertices[idx1];
+            const v2 = vertices[idx2];
+            const v3 = vertices[idx3];
+
+            if (!v1 || !v2 || !v3) continue;
+            const maxY = Math.max(v1.y, v2.y, v3.y);
+            const minY = Math.min(v1.y, v2.y, v3.y);
+
+            if (maxY - minY > alturaMinimaParede) {
+                hitboxes.push({
+                    minX: Math.min(v1.x, v2.x, v3.x) - padding,
+                    maxX: Math.max(v1.x, v2.x, v3.x) + padding,
+                    minZ: Math.min(v1.z, v2.z, v3.z) - padding,
+                    maxZ: Math.max(v1.z, v2.z, v3.z) + padding
+                });
+            }
+        }
+    }
+    return hitboxes;
+}
+
+// Exemplo de uso:
+// fetch('meu_mapa.obj')
+//   .then(res => res.text())
+//   .then(texto => console.log(gerarHitboxesDoOBJ(texto)));

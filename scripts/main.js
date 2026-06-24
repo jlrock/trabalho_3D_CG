@@ -4,6 +4,9 @@ var gl, prog;
 var totalTime = 0;
 var lastTime = 0;
 
+let mapHitboxes = [];
+
+
 async function init() {
   var canvas = document.getElementById("glcanvas1");
   gl = getGL(canvas);
@@ -36,24 +39,12 @@ async function init() {
   } catch (e) {
     console.error("Falha ao carregar cena OBJ:", e);
   }
+    
+  const textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then((r) => r.text());
+  mapHitboxes = getHitboxFromOBJ(textoOBJ);
 
   initInput();
   requestAnimationFrame(gameLoop);
-}
-
-function gameLoop(timestamp) {
-  var dt = Math.min((timestamp - lastTime) / 1000, 0.05);
-  lastTime = timestamp;
-  totalTime += dt;
-
-  update(dt);
-  render();
-
-  requestAnimationFrame(gameLoop);
-}
-
-function update(dt) {
-  camera.move(dt);
 }
 
 function render() {
