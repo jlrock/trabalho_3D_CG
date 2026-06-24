@@ -29,7 +29,7 @@
           pointToLight = lightpos - position.xyz;
           pointToCam   = campos   - position.xyz;
           v_normal   = (transf * vec4(normal, 1.0)).xyz;
-          v_texCoord = texCoord;
+          v_texCoord = vec2(texCoord.x, 1.0 - texCoord.y);
           gl_Position = transfproj * position;
       }
     </script>
