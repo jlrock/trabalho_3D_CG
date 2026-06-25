@@ -46,10 +46,10 @@ async function init() {
 
   try {
     var mapHitboxOBJ = await fetch(
-      "./../assets/models/backrooms_hitbox.obj",
+      "./assets/models/backrooms_hitbox.obj",
     ).then((r) => r.text());
     mapHitboxes = getHitboxFromOBJ(mapHitboxOBJ);
-    var keyHitboxOBJ = await fetch("./../assets/models/key_hitbox.obj").then(
+    var keyHitboxOBJ = await fetch("./assets/models/key_hitbox.obj").then(
       (r) => r.text(),
     );
     keyHitbox = getHitboxFromOBJ(keyHitboxOBJ);
