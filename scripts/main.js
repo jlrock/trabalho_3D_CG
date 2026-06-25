@@ -3,6 +3,7 @@
 var gl, prog;
 var totalTime = 0;
 var lastTime = 0;
+var mproj;
 
 let isGameOver = false ;
 
@@ -34,7 +35,7 @@ async function init() {
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
+  
   gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [1.0, 0.8, 0.5]);
   gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
 
@@ -48,6 +49,9 @@ async function init() {
     
   const textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then((r) => r.text());
   mapHitboxes = getHitboxFromOBJ(textoOBJ);
+
+  var aspect = gl.canvas.width / gl.canvas.height;
+  mproj = createPerspective(70, aspect, 0.1, 100);
 
   initInput();
   requestAnimationFrame(gameLoop);
@@ -73,8 +77,6 @@ function update(dt) {
 function render() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  var aspect = gl.canvas.width / gl.canvas.height;
-  var mproj = createPerspective(70, aspect, 0.1, 100);
   var viewMat = camera.getViewMatrix();
 
   var front = camera.getFront();
