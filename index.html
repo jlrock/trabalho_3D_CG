@@ -104,6 +104,27 @@
       <img src="./assets/images/key_snapshot.png" height="200" />
     </div>
 
+    <div id="menu">
+      <h1>Escape From Tung Tung Sahur</h1>
+      <button id="button-play">Play</button>
+      <button id="button-menu">Instructions</button>
+      <button id="button-exit">Exit</button>
+    </div>
+
+    <div id="pauseMenu">
+      <button onclick="continueGame()">Continue</button>
+      <button onclick="returnMenu()">Return to the menu</button>
+    </div>
+
+    <div id="instructionsPanel" class="panel">
+      <h2>Instructions</h2>
+      <p>WASD - Move</p>
+      <p>Mouse - Camera</p>
+      <p>Key ESC - Pause</p>
+
+      <button onclick="closeInstructions()">Back</button>
+    </div>
+
     <script src="./scripts/main.js"></script>
     <script src="./scripts/camera.js"></script>
     <script src="./scripts/scene.js"></script>
