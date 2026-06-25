@@ -5,14 +5,12 @@ var totalTime = 0;
 var lastTime = 0;
 var mproj;
 
-let isGameOver = false ;
-
 const gameOverScreen = document.getElementById("gameOverScreen");
 const victoryScreen = document.getElementById("victoryScreen");
 const btnRestart = document.getElementById("btnRestart");
 const btnNext = document.getElementById("btnNext");
 
-let mapHitboxes = [];
+var mapHitboxes = [];
 
 async function init() {
   var canvas = document.getElementById("glcanvas1");
@@ -46,45 +44,21 @@ async function init() {
   } catch (e) {
     console.error("Falha ao carregar cena OBJ:", e);
   }
-    
-  const textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then((r) => r.text());
-  mapHitboxes = getHitboxFromOBJ(textoOBJ);
+  
+  try {
+    var textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then(
+      (r) => r.text(),
+    );
+    mapHitboxes = getHitboxFromOBJ(textoOBJ);
+  } catch (e) {
+    console.error("Falha ao carregar hitboxes:", e);
+  }
 
   var aspect = gl.canvas.width / gl.canvas.height;
   mproj = createPerspective(70, aspect, 0.1, 100);
 
   initInput();
   requestAnimationFrame(gameLoop);
-}
-
-function gameLoop(timestamp) {
-  if(isGameOver) return ;
-
-  var dt = Math.min((timestamp - lastTime) / 1000, 0.05);
-  lastTime = timestamp;
-  totalTime += dt;
-
-  update(dt);
-  render();
-
-  requestAnimationFrame(gameLoop);
-}
-
-function update(dt) {
-  camera.move(dt);
-}
-
-function render() {
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-  var viewMat = camera.getViewMatrix();
-
-  var front = camera.getFront();
-  gl.uniform3fv(gl.getUniformLocation(prog, "lightpos"), camera.pos);
-  gl.uniform3fv(gl.getUniformLocation(prog, "lightDirection"), front);
-  gl.uniform3fv(gl.getUniformLocation(prog, "campos"), camera.pos);
-
-  drawScene(mproj, viewMat);
 }
 
 function createFallbackTexture(unit) {
@@ -108,6 +82,7 @@ function createFallbackTexture(unit) {
   return tex;
 }
 
+ 
 function drawObject(
   buf,
   count,
