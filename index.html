@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Escape from Tum Tum Sahur</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <title>Escape from Tung Tung Sahur</title>
+    <link rel="stylesheet" href="styles/style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.2.0/math.min.js"></script>
     <script src="./scripts/input.js"></script>
     <script src="./scripts/obj-loader.js"></script>
-    <script src="/scripts/game.js"></script>
+    <script src="./scripts/game.js"></script>
+    <script src="/scripts/monster.js"></script>
 
     <script id="vertex-shader" type="notjs">
       attribute vec4 position;
@@ -87,16 +88,16 @@
 
     <div id="gameOverScreen" class="overlay-screen hidden">
       <h1>GAME OVER</h1>
-      <p>O Tum Tum Sahur te pegou!</p>
+      <p>O Tung Tung Sahur te pegou!</p>
       <button id="btnRestart">Tentar Novamente</button>
     </div>
 
     <div id="victoryScreen" class="overlay-screen hidden">
       <h1>VITÓRIA!</h1>
-      <p>Você escapou do Tum Tum Sahur!</p>
+      <p>Você escapou do Tung Tung Sahur!</p>
       <button id="btnNext">Jogar Novamente</button>
     </div>
-    
+
     <script src="./scripts/main.js"></script>
     <script src="./scripts/camera.js"></script>
     <script src="./scripts/scene.js"></script>

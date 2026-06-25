@@ -1,9 +1,22 @@
+var isGameOver = false;
+var isGameWon = false;
+
+function triggerGameOver() {
+  if (isGameOver) return;
+  isGameOver = true;
+}
+
+function triggerGameWon() {
+  if (isGameWon) return;
+  isGameWon = true;
+}
+
 function gameLoop(timestamp) {
   var dt = Math.min((timestamp - lastTime) / 1000, 0.05);
   lastTime = timestamp;
   totalTime += dt;
 
-  update(dt);
+  if (!isGameOver) update(dt);
   render();
 
   requestAnimationFrame(gameLoop);
@@ -11,6 +24,7 @@ function gameLoop(timestamp) {
 
 function update(dt) {
   camera.move(dt);
+  monster.update(dt);
 }
 
 function render() {
@@ -25,14 +39,19 @@ function render() {
   gl.uniform3fv(gl.getUniformLocation(prog, "lightDirection"), front);
   gl.uniform3fv(gl.getUniformLocation(prog, "campos"), camera.pos);
 
+  if (monster.state === "chasing") {
+    gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [1, 0.3, 0.2]);
+  } else if (monster.state === "idle" || monster.state === "hunting") {
+    gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [0.3, 0.4, 0.4]);
+  }
+  gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
   drawScene(mproj, viewMat);
 }
 
-function checkCollision(camX, camZ, radius, wall) {
-  let pontoMaisProximoX = Math.max(wall.minX, Math.min(camX, wall.maxX));
-  let pontoMaisProximoZ = Math.max(wall.minZ, Math.min(camZ, wall.maxZ));
-  let distanciaX = camX - pontoMaisProximoX;
-  let distanciaZ = camZ - pontoMaisProximoZ;
-  let distanciaAoQuadrado = distanciaX * distanciaX + distanciaZ * distanciaZ;
-  return distanciaAoQuadrado < radius * radius;
+function checkCollision(cx, cz, radius, wall) {
+  var nearX = Math.max(wall.minX, Math.min(cx, wall.maxX));
+  var nearZ = Math.max(wall.minZ, Math.min(cz, wall.maxZ));
+  var dx = cx - nearX;
+  var dz = cz - nearZ;
+  return dx * dx + dz * dz < radius * radius;
 }
