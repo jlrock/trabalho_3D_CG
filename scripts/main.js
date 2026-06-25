@@ -9,6 +9,7 @@ const gameOverScreen = document.getElementById("gameOverScreen");
 const victoryScreen = document.getElementById("victoryScreen");
 const btnRestart = document.getElementById("btnRestart");
 const btnNext = document.getElementById("btnNext");
+const keyItem = document.getElementById("key-item");
 
 var mapHitboxes = [];
 var keyHitbox = [];
@@ -45,10 +46,10 @@ async function init() {
 
   try {
     var mapHitboxOBJ = await fetch(
-      "./../assets/models/backrooms_hitbox.obj",
+      "./assets/models/backrooms_hitbox.obj",
     ).then((r) => r.text());
     mapHitboxes = getHitboxFromOBJ(mapHitboxOBJ);
-    var keyHitboxOBJ = await fetch("./../assets/models/key_hitbox.obj").then(
+    var keyHitboxOBJ = await fetch("./assets/models/key_hitbox.obj").then(
       (r) => r.text(),
     );
     keyHitbox = getHitboxFromOBJ(keyHitboxOBJ);
@@ -132,6 +133,14 @@ function showGameOver() {
 function showVictory() {
   isGameOver = true;
   victoryScreen.classList.remove("hidden");
+}
+
+function handleKeyImage() {
+  if (isKeyCaught) {
+    keyItem.classList.remove("hidden");
+  } else {
+    !keyItem.classList.contains("hidden") && keyItem.classList.add("hidden");
+  }
 }
 
 btnRestart.addEventListener("click", () => {

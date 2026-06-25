@@ -1,18 +1,18 @@
 var scene = {};
 
 async function setupScene() {
-  const mapParts = await loadOBJ("./../assets/models/backrooms.obj");
-  const sahurParts = await loadOBJ("./../assets/models/sahur.obj");
-  const keyParts = await loadOBJ("./../assets/models/key.obj");
+  const mapParts = await loadOBJ("./assets/models/backrooms.obj");
+  const sahurParts = await loadOBJ("./assets/models/sahur.obj");
+  const keyParts = await loadOBJ("./assets/models/key.obj");
 
   scene.parts = [];
   scene.monsterParts = [];
   scene.key = [];
 
-  loadTexture(gl, "./../assets/textures/carpet.jpeg", 0);
-  loadTexture(gl, "./../assets/textures/wallpaper.jpeg", 1);
-  loadTexture(gl, "./../assets/textures/sahur.png", 2);
-  loadTexture(gl, "./../assets/textures/key.png", 3);
+  loadTexture(gl, "./assets/textures/carpet.jpeg", 0);
+  loadTexture(gl, "./assets/textures/wallpaper.jpeg", 1);
+  loadTexture(gl, "./assets/textures/sahur.png", 2);
+  loadTexture(gl, "./assets/textures/key.png", 3);
 
   for (const part of mapParts) {
     var buf = gl.createBuffer();
