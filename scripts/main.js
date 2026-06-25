@@ -4,8 +4,14 @@ var gl, prog;
 var totalTime = 0;
 var lastTime = 0;
 
-let mapHitboxes = [];
+let isGameOver = false ;
 
+const gameOverScreen = document.getElementById("gameOverScreen");
+const victoryScreen = document.getElementById("victoryScreen");
+const btnRestart = document.getElementById("btnRestart");
+const btnNext = document.getElementById("btnNext");
+
+let mapHitboxes = [];
 
 async function init() {
   var canvas = document.getElementById("glcanvas1");
@@ -45,6 +51,23 @@ async function init() {
 
   initInput();
   requestAnimationFrame(gameLoop);
+}
+
+function gameLoop(timestamp) {
+  if(isGameOver) return ;
+
+  var dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+  lastTime = timestamp;
+  totalTime += dt;
+
+  update(dt);
+  render();
+
+  requestAnimationFrame(gameLoop);
+}
+
+function update(dt) {
+  camera.move(dt);
 }
 
 function render() {
@@ -122,3 +145,44 @@ function drawObject(
   gl.uniform1i(gl.getUniformLocation(prog, "tex"), texUnit);
   gl.drawArrays(gl.TRIANGLES, 0, count);
 }
+
+function showGameOver(){
+  isGameOver=true;
+  gameOverScreen.classList.remove('hidden');
+}
+
+function showVictory(){
+  isGameOver=true;
+  victoryScreen.classList.remove('hidden');
+}
+
+btnRestart.addEventListener('click', ()=>{
+  gameOverScreen.classList.add('hidden');
+  resetGame();
+});
+
+btnNext.addEventListener('click', ()=>{
+  victoryScreen.classList.add('hidden');
+  resetGame();
+});
+
+function resetGame(){
+  console.log('Jogo reiniciado!');
+  camera.reset();
+  lastTime=performance.now();
+  isGameOver=false;
+  requestAnimationFrame(gameLoop);
+}
+
+// Funções para testar as telas finais:
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'v' || event.key === 'V') {
+    console.log("Cheat ativado: Vitória");
+    showVictory();
+  }
+  
+  if (event.key === 'g' || event.key === 'G') {
+    console.log("Cheat ativado: Game Over");
+    showGameOver();
+  }
+});

@@ -5,6 +5,12 @@ const camera = {
   speed: 2.5,
   radius: 0.1,
 
+  reset() {
+    this.pos = [0.0, 0.7, 0.0];
+    this.yaw = Math.PI;
+    this.pitch = 0.0;
+  },
+
   getFront() {
     return [
       Math.cos(this.pitch) * Math.sin(this.yaw),
