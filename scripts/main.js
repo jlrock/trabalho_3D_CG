@@ -147,6 +147,7 @@ btnNext.addEventListener("click", () => {
 function resetGame() {
   camera.reset();
   monster.reset();
+  key.reset();
   lastTime = performance.now();
   isGameOver = false;
   isWin = false;
