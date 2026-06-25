@@ -2,7 +2,7 @@ const door = {
   pos: [0.0, 0.0, 4.05],
   yaw: 0,
   baseColor: [0.05, 0.95, 0.45],
-  winRadius: 0.3,
+  winRadius: 0.5,
   buffer: null,
   vertexCount: 0,
 
@@ -77,7 +77,7 @@ const door = {
     if (isWin) return;
     const dx = this.pos[0] - camera.pos[0];
     const dz = this.pos[2] - camera.pos[2];
-    if (Math.sqrt(dx * dx + dz * dz) < this.winRadius) {
+    if (Math.sqrt(dx * dx + dz * dz) < this.winRadius && isKeyCaught == true) {
       triggerWin();
     }
   },

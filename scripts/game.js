@@ -26,6 +26,7 @@ function gameLoop(timestamp) {
 function update(dt) {
   camera.move(dt);
   monster.update(dt);
+  key.checkCatch();
   door.checkWin();
 }
 

@@ -85,18 +85,20 @@ function drawScene(projMat, viewMat) {
     );
   }
   
-  const keyTransform = key.getTransform();
-  for (const part of scene.key) {
-    drawObject(
-      part.buffer,
-      part.vertexCount,
-      keyTransform,
-      projMat,
-      viewMat,
-      part.textureUnit,
-      false,
-      null,
-    );
+  if(!isKeyCaught) {
+    const keyTransform = key.getTransform();
+    for (const part of scene.key) {
+      drawObject(
+        part.buffer,
+        part.vertexCount,
+        keyTransform,
+        projMat,
+        viewMat,
+        part.textureUnit,
+        false,
+        null,
+      );
+    }
   }
   
 

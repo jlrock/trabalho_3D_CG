@@ -11,6 +11,7 @@ const btnRestart = document.getElementById("btnRestart");
 const btnNext = document.getElementById("btnNext");
 
 var mapHitboxes = [];
+var keyHitbox = [];
 
 async function init() {
   var canvas = document.getElementById("glcanvas1");
@@ -43,10 +44,14 @@ async function init() {
   }
 
   try {
-    var textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then(
+    var mapHitboxOBJ = await fetch(
+      "./../assets/models/backrooms_hitbox.obj",
+    ).then((r) => r.text());
+    mapHitboxes = getHitboxFromOBJ(mapHitboxOBJ);
+    var keyHitboxOBJ = await fetch("./../assets/models/key_hitbox.obj").then(
       (r) => r.text(),
     );
-    mapHitboxes = getHitboxFromOBJ(textoOBJ);
+    keyHitbox = getHitboxFromOBJ(keyHitboxOBJ);
   } catch (e) {
     console.error("Falha ao carregar hitboxes:", e);
   }
