@@ -4,7 +4,14 @@
  */
 function getGL(canvas) {
   var gl = canvas.getContext("webgl");
-  if (gl) return gl;
+  const pixelRatio = window.devicePixelRatio || 1;
+  const displayWidth = Math.floor(canvas.clientWidth * pixelRatio);
+  const displayHeight = Math.floor(canvas.clientHeight * pixelRatio);
+  if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+    if (gl) return gl;
+  }
 
   gl = canvas.getContext("experimental-webgl");
   if (gl) return gl;
@@ -245,3 +252,57 @@ function loadTexture(gl, url, unit) {
   return texture;
 }
 
+function makeQuad(v0, v1, v2, v3, n, tu, tv) {
+  return [
+    // Triângulo 1: v0, v1, v2
+    v0[0],
+    v0[1],
+    v0[2],
+    0,
+    0,
+    n[0],
+    n[1],
+    n[2],
+    v1[0],
+    v1[1],
+    v1[2],
+    0,
+    tv,
+    n[0],
+    n[1],
+    n[2],
+    v2[0],
+    v2[1],
+    v2[2],
+    tu,
+    tv,
+    n[0],
+    n[1],
+    n[2],
+    // Triângulo 2: v0, v2, v3
+    v0[0],
+    v0[1],
+    v0[2],
+    0,
+    0,
+    n[0],
+    n[1],
+    n[2],
+    v2[0],
+    v2[1],
+    v2[2],
+    tu,
+    tv,
+    n[0],
+    n[1],
+    n[2],
+    v3[0],
+    v3[1],
+    v3[2],
+    tu,
+    0,
+    n[0],
+    n[1],
+    n[2],
+  ];
+}

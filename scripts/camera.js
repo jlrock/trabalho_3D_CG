@@ -3,6 +3,13 @@ const camera = {
   yaw: Math.PI,
   pitch: 0.0,
   speed: 2.5,
+  radius: 0.1,
+
+  reset() {
+    this.pos = [0.0, 0.7, 0.0];
+    this.yaw = Math.PI;
+    this.pitch = 0.0;
+  },
 
   getFront() {
     return [
@@ -28,21 +35,54 @@ const camera = {
     var fx = fLen > 0.0001 ? f[0] / fLen : 0;
     var fz = fLen > 0.0001 ? f[2] / fLen : 0;
 
+    let dx = 0;
+    let dz = 0;
+
     if (keys["w"] || keys["arrowup"]) {
-      this.pos[0] += fx * dist;
-      this.pos[2] += fz * dist;
+      dx += fx * dist;
+      dz += fz * dist;
     }
     if (keys["s"] || keys["arrowdown"]) {
-      this.pos[0] -= fx * dist;
-      this.pos[2] -= fz * dist;
+      dx -= fx * dist;
+      dz -= fz * dist;
     }
     if (keys["a"] || keys["arrowleft"]) {
-      this.pos[0] -= r[0] * dist;
-      this.pos[2] -= r[2] * dist;
+      dx -= r[0] * dist;
+      dz -= r[2] * dist;
     }
     if (keys["d"] || keys["arrowright"]) {
-      this.pos[0] += r[0] * dist;
-      this.pos[2] += r[2] * dist;
+      dx += r[0] * dist;
+      dz += r[2] * dist;
+    }
+
+    let futuraPosicaoX = this.pos[0] + dx;
+    let colidiuNoX = false;
+
+    for (let i = 0; i < mapHitboxes.length; i++) {
+      if (
+        checkCollision(futuraPosicaoX, this.pos[2], this.radius, mapHitboxes[i])
+      ) {
+        colidiuNoX = true;
+        break;
+      }
+    }
+    if (!colidiuNoX) {
+      this.pos[0] = futuraPosicaoX;
+    }
+
+    let futuraPosicaoZ = this.pos[2] + dz;
+    let colidiuNoZ = false;
+
+    for (let i = 0; i < mapHitboxes.length; i++) {
+      if (
+        checkCollision(this.pos[0], futuraPosicaoZ, this.radius, mapHitboxes[i])
+      ) {
+        colidiuNoZ = true;
+        break;
+      }
+    }
+    if (!colidiuNoZ) {
+      this.pos[2] = futuraPosicaoZ;
     }
   },
 
