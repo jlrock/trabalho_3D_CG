@@ -1,11 +1,11 @@
 const monster = {
-  pos: [1.0, 0.0, -1.0],
+  pos: [7.0, 0.0, -7.0],
   yaw: 0.0,
   state: "idle",
   idleTimer: 0.0,
   normalSpeed: 1.8,
-  chaseSpeed: 4.0,
-  radius: 0.3,
+  chaseSpeed: 2.8,
+  radius: 0.1,
   detectRadius: 10.0,
   loseRadius: 16.0,
   killRadius: 0.7,
@@ -57,7 +57,7 @@ const monster = {
   update(dt) {
     if (this.state === "idle") {
       this.idleTimer += dt;
-      if (this.idleTimer >= 5.0) this.state = "hunting";
+      if (this.idleTimer >= 10.0) this.state = "hunting";
       return;
     }
 
