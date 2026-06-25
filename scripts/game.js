@@ -1,14 +1,14 @@
 var isGameOver = false;
-var isGameWon = false;
+var isWin = false;
 
 function triggerGameOver() {
-  if (isGameOver) return;
+  if (isGameOver || isWin) return;
   isGameOver = true;
 }
 
-function triggerGameWon() {
-  if (isGameWon) return;
-  isGameWon = true;
+function triggerWin() {
+  if (isGameOver || isWin) return;
+  isWin = true;
 }
 
 function gameLoop(timestamp) {
@@ -16,7 +16,7 @@ function gameLoop(timestamp) {
   lastTime = timestamp;
   totalTime += dt;
 
-  if (!isGameOver) update(dt);
+  if (!isGameOver && !isWin) update(dt);
   render();
 
   requestAnimationFrame(gameLoop);
@@ -25,6 +25,7 @@ function gameLoop(timestamp) {
 function update(dt) {
   camera.move(dt);
   monster.update(dt);
+  door.checkWin();
 }
 
 function render() {

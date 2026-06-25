@@ -41,7 +41,7 @@ async function init() {
   } catch (e) {
     console.error("Falha ao carregar cena OBJ:", e);
   }
-  
+
   try {
     var textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then(
       (r) => r.text(),
@@ -78,7 +78,6 @@ function createFallbackTexture(unit) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   return tex;
 }
-
 
 function drawObject(
   buf,
@@ -120,41 +119,41 @@ function drawObject(
   gl.drawArrays(gl.TRIANGLES, 0, count);
 }
 
-function showGameOver(){
-  isGameOver=true;
-  gameOverScreen.classList.remove('hidden');
+function showGameOver() {
+  isGameOver = true;
+  gameOverScreen.classList.remove("hidden");
 }
 
-function showVictory(){
-  isGameOver=true;
-  victoryScreen.classList.remove('hidden');
+function showVictory() {
+  isGameOver = true;
+  victoryScreen.classList.remove("hidden");
 }
 
-btnRestart.addEventListener('click', ()=>{
-  gameOverScreen.classList.add('hidden');
+btnRestart.addEventListener("click", () => {
+  gameOverScreen.classList.add("hidden");
   resetGame();
 });
 
-btnNext.addEventListener('click', ()=>{
-  victoryScreen.classList.add('hidden');
+btnNext.addEventListener("click", () => {
+  victoryScreen.classList.add("hidden");
   resetGame();
 });
 
-function resetGame(){
+function resetGame() {
   camera.reset();
   monster.reset();
-  lastTime=performance.now();
-  isGameOver=false;
-  isGameWon = false;
+  lastTime = performance.now();
+  isGameOver = false;
+  isWin = false;
   requestAnimationFrame(gameLoop);
 }
 
-window.addEventListener('keydown', (event) => {
-  if (isGameOver && isGameWon) {
+window.addEventListener("keydown", (event) => {
+  if (isGameOver && isWin) {
     showVictory();
   }
-  
-  if (isGameOver && !isGameWon) {
+
+  if (isGameOver && !isWin) {
     showGameOver();
   }
 });
