@@ -11,6 +11,7 @@ const btnRestart = document.getElementById("btnRestart");
 const btnNext = document.getElementById("btnNext");
 
 var mapHitboxes = [];
+var keyHitbox = [];
 
 async function init() {
   var canvas = document.getElementById("glcanvas1");
@@ -41,12 +42,16 @@ async function init() {
   } catch (e) {
     console.error("Falha ao carregar cena OBJ:", e);
   }
-  
+
   try {
-    var textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then(
+    var mapHitboxOBJ = await fetch(
+      "./../assets/models/backrooms_hitbox.obj",
+    ).then((r) => r.text());
+    mapHitboxes = getHitboxFromOBJ(mapHitboxOBJ);
+    var keyHitboxOBJ = await fetch("./../assets/models/key_hitbox.obj").then(
       (r) => r.text(),
     );
-    mapHitboxes = getHitboxFromOBJ(textoOBJ);
+    keyHitbox = getHitboxFromOBJ(keyHitboxOBJ);
   } catch (e) {
     console.error("Falha ao carregar hitboxes:", e);
   }
@@ -78,7 +83,6 @@ function createFallbackTexture(unit) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   return tex;
 }
-
 
 function drawObject(
   buf,
@@ -120,41 +124,31 @@ function drawObject(
   gl.drawArrays(gl.TRIANGLES, 0, count);
 }
 
-function showGameOver(){
-  isGameOver=true;
-  gameOverScreen.classList.remove('hidden');
+function showGameOver() {
+  isGameOver = true;
+  gameOverScreen.classList.remove("hidden");
 }
 
-function showVictory(){
-  isGameOver=true;
-  victoryScreen.classList.remove('hidden');
+function showVictory() {
+  isGameOver = true;
+  victoryScreen.classList.remove("hidden");
 }
 
-btnRestart.addEventListener('click', ()=>{
-  gameOverScreen.classList.add('hidden');
+btnRestart.addEventListener("click", () => {
+  gameOverScreen.classList.add("hidden");
   resetGame();
 });
 
-btnNext.addEventListener('click', ()=>{
-  victoryScreen.classList.add('hidden');
+btnNext.addEventListener("click", () => {
+  victoryScreen.classList.add("hidden");
   resetGame();
 });
 
-function resetGame(){
+function resetGame() {
   camera.reset();
   monster.reset();
-  lastTime=performance.now();
-  isGameOver=false;
-  isGameWon = false;
+  lastTime = performance.now();
+  isGameOver = false;
+  isWin = false;
   requestAnimationFrame(gameLoop);
 }
-
-window.addEventListener('keydown', (event) => {
-  if (isGameOver && isGameWon) {
-    showVictory();
-  }
-  
-  if (isGameOver && !isGameWon) {
-    showGameOver();
-  }
-});

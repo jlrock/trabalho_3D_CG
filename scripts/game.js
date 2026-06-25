@@ -1,14 +1,15 @@
 var isGameOver = false;
-var isGameWon = false;
+var isWin = false;
 
 function triggerGameOver() {
-  if (isGameOver) return;
+  if (isGameOver || isWin) return;
   isGameOver = true;
 }
 
-function triggerGameWon() {
-  if (isGameWon) return;
-  isGameWon = true;
+function triggerWin() {
+  if (isGameOver || isWin) return;
+  triggerGameOver();
+  isWin = true;
 }
 
 function gameLoop(timestamp) {
@@ -16,7 +17,7 @@ function gameLoop(timestamp) {
   lastTime = timestamp;
   totalTime += dt;
 
-  if (!isGameOver) update(dt);
+  if (!isGameOver && !isWin) update(dt);
   render();
 
   requestAnimationFrame(gameLoop);
@@ -25,6 +26,8 @@ function gameLoop(timestamp) {
 function update(dt) {
   camera.move(dt);
   monster.update(dt);
+  key.checkCatch();
+  door.checkWin();
 }
 
 function render() {
@@ -46,6 +49,12 @@ function render() {
   }
   gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
   drawScene(mproj, viewMat);
+  if (isGameOver && isWin) {
+    showVictory();
+  }
+  if (isGameOver && !isWin) {
+    showGameOver();
+  }
 }
 
 function checkCollision(cx, cz, radius, wall) {
