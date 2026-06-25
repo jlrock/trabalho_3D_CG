@@ -1,0 +1,57 @@
+/* Arquivo: styles/style.css */
+body { margin: 0; overflow: hidden; }
+
+#gameCanvas {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}
+
+.overlay-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.hidden {
+    display: none !important;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+    background-color: #08ebd8ee;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+#gameOverScreen h1 {
+    color: #ff4d4d; 
+    text-shadow: 0 0 10px rgba(255, 77, 77, 0.5); 
+}
+
+#victoryScreen h1 {
+    color: #2ecc71; 
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.5); 
+}
+
+#gameOverScreen p {
+    font-size: 18px;
+}
+
+#victoryScreen p {
+    font-size: 18px;
+}
