@@ -49,6 +49,9 @@ function render() {
   }
   gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
   drawScene(mproj, viewMat);
+
+  handleKeyImage();
+
   if (isGameOver && isWin) {
     showVictory();
   }
