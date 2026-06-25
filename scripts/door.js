@@ -1,14 +1,14 @@
 const door = {
-  pos: [0.0, 0.0, -8.0],
-  yaw: 0.0,
+  pos: [0.0, 0.0, 4.05],
+  yaw: 0,
   baseColor: [0.05, 0.95, 0.45],
-  winRadius: 1.5,
+  winRadius: 0.3,
   buffer: null,
   vertexCount: 0,
 
   build() {
     const hw = 0.6;
-    const h = 2.2;
+    const h = 1.5;
     const v = [];
 
     v.push(

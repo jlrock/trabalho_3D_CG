@@ -7,8 +7,8 @@ async function setupScene() {
   scene.parts = [];
   scene.monsterParts = [];
 
-  loadTexture(gl, "assets/textures/carpet.jpeg", 0);
-  loadTexture(gl, "assets/textures/wallpaper.jpeg", 1);
+  loadTexture(gl, "./../assets/textures/carpet.jpeg", 0);
+  loadTexture(gl, "./../assets/textures/wallpaper.jpeg", 1);
   loadTexture(gl, "./../assets/textures/sahur.png", 2);
 
   for (const part of mapParts) {
@@ -38,6 +38,8 @@ async function setupScene() {
       textureUnit: 2,
     });
   }
+
+  door.build();
 }
 
 function drawScene(projMat, viewMat) {
@@ -67,4 +69,6 @@ function drawScene(projMat, viewMat) {
       null,
     );
   }
+
+  door.draw(projMat, viewMat);
 }

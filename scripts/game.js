@@ -8,6 +8,7 @@ function triggerGameOver() {
 
 function triggerWin() {
   if (isGameOver || isWin) return;
+  triggerGameOver();
   isWin = true;
 }
 
@@ -47,6 +48,12 @@ function render() {
   }
   gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
   drawScene(mproj, viewMat);
+  if (isGameOver && isWin) {
+    showVictory();
+  }
+  if (isGameOver && !isWin) {
+    showGameOver();
+  }
 }
 
 function checkCollision(cx, cz, radius, wall) {

@@ -147,13 +147,3 @@ function resetGame() {
   isWin = false;
   requestAnimationFrame(gameLoop);
 }
-
-window.addEventListener("keydown", (event) => {
-  if (isGameOver && isWin) {
-    showVictory();
-  }
-
-  if (isGameOver && !isWin) {
-    showGameOver();
-  }
-});
