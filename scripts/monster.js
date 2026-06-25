@@ -10,6 +10,19 @@ const monster = {
   loseRadius: 16.0,
   killRadius: 0.7,
 
+  reset() {
+    this.pos = [7.0, 0.0, -7.0];
+    this.yaw = 0.0;
+    this.state = "idle";
+    this.idleTimer = 0.0;
+    this.normalSpeed = 1.8;
+    this.chaseSpeed = 2.8;
+    this.radius = 0.1;
+    this.detectRadius = 10.0;
+    this.loseRadius = 16.0;
+    this.killRadius = 0.7;
+  },
+
   distToPlayer() {
     const dx = this.pos[0] - camera.pos[0];
     const dz = this.pos[2] - camera.pos[2];

@@ -1,8 +1,14 @@
 var isGameOver = false;
+var isGameWon = false;
 
 function triggerGameOver() {
   if (isGameOver) return;
   isGameOver = true;
+}
+
+function triggerGameWon() {
+  if (isGameWon) return;
+  isGameWon = true;
 }
 
 function gameLoop(timestamp) {

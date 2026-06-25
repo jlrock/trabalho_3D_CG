@@ -82,7 +82,7 @@ function createFallbackTexture(unit) {
   return tex;
 }
 
- 
+
 function drawObject(
   buf,
   count,
@@ -144,22 +144,20 @@ btnNext.addEventListener('click', ()=>{
 });
 
 function resetGame(){
-  console.log('Jogo reiniciado!');
   camera.reset();
+  monster.reset();
   lastTime=performance.now();
   isGameOver=false;
+  isGameWon = false;
   requestAnimationFrame(gameLoop);
 }
 
-// Funções para testar as telas finais:
 window.addEventListener('keydown', (event) => {
-  if (event.key === 'v' || event.key === 'V') {
-    console.log("Cheat ativado: Vitória");
+  if (isGameOver && isGameWon) {
     showVictory();
   }
   
-  if (event.key === 'g' || event.key === 'G') {
-    console.log("Cheat ativado: Game Over");
+  if (isGameOver && !isGameWon) {
     showGameOver();
   }
 });
