@@ -61,6 +61,7 @@ async function init() {
   mproj = createPerspective(70, aspect, 0.1, 100);
 
   initInput();
+  setupMenuButtons()
   requestAnimationFrame(gameLoop);
 }
 
