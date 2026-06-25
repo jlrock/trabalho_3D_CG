@@ -4,7 +4,14 @@
  */
 function getGL(canvas) {
   var gl = canvas.getContext("webgl");
-  if (gl) return gl;
+  const pixelRatio = window.devicePixelRatio || 1;
+  const displayWidth = Math.floor(canvas.clientWidth * pixelRatio);
+  const displayHeight = Math.floor(canvas.clientHeight * pixelRatio);
+  if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+    if (gl) return gl;
+  }
 
   gl = canvas.getContext("experimental-webgl");
   if (gl) return gl;

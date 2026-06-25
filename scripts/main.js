@@ -11,6 +11,8 @@ const victoryScreen = document.getElementById("victoryScreen");
 const btnRestart = document.getElementById("btnRestart");
 const btnNext = document.getElementById("btnNext");
 
+let mapHitboxes = [];
+
 async function init() {
   var canvas = document.getElementById("glcanvas1");
   gl = getGL(canvas);
@@ -43,6 +45,9 @@ async function init() {
   } catch (e) {
     console.error("Falha ao carregar cena OBJ:", e);
   }
+    
+  const textoOBJ = await fetch("./../assets/models/backrooms_hitbox.obj").then((r) => r.text());
+  mapHitboxes = getHitboxFromOBJ(textoOBJ);
 
   initInput();
   requestAnimationFrame(gameLoop);
