@@ -33,9 +33,6 @@ async function init() {
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  
-  gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [1.0, 0.8, 0.5]);
-  gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
 
   createFallbackTexture(0);
 

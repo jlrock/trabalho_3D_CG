@@ -39,6 +39,12 @@ function render() {
   gl.uniform3fv(gl.getUniformLocation(prog, "lightDirection"), front);
   gl.uniform3fv(gl.getUniformLocation(prog, "campos"), camera.pos);
 
+  if (monster.state === "chasing") {
+    gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [1, 0.3, 0.2]);
+  } else if (monster.state === "idle" || monster.state === "hunting") {
+    gl.uniform3fv(gl.getUniformLocation(prog, "lightColor"), [0.3, 0.4, 0.4]);
+  }
+  gl.uniform1i(gl.getUniformLocation(prog, "useSolidColor"), 0);
   drawScene(mproj, viewMat);
 }
 

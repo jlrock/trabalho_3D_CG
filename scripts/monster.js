@@ -6,8 +6,8 @@ const monster = {
   normalSpeed: 1.8,
   chaseSpeed: 2.8,
   radius: 0.1,
-  detectRadius: 10.0,
-  loseRadius: 16.0,
+  detectRadius: 3.0,
+  loseRadius: 3.75,
   killRadius: 0.7,
 
   reset() {
