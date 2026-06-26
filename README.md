@@ -15,7 +15,7 @@
 
 ## 🔗 Links
 
-- 📊 **Presentation slides**: [Insert link]
+- 📊 **Presentation slides**: [Canva Link](https://canva.link/trabalhocgtungtungsuhur)
 - 🎥 **Demo video**: [Drive Link](https://drive.google.com/file/d/1rwwVJhpaY___xujaQF17cdgd42po7buK/view?usp=sharing)
 - 🌐 **GitHub Pages (online demo)**: [Game Link](https://jlrock.github.io/trabalho_3D_CG/)
 
