@@ -1,4 +1,18 @@
-/* Arquivo: styles/style.css */
+#menu button {
+    width: 150px;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+button {
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
 body { margin: 0; overflow: hidden; }
 
 #gameCanvas {

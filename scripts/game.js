@@ -1,3 +1,10 @@
+const GAME_STATE = {
+  MENU: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+};
+var gameState = GAME_STATE.MENU;
+
 var isGameOver = false;
 var isWin = false;
 
@@ -24,10 +31,43 @@ function gameLoop(timestamp) {
 }
 
 function update(dt) {
+  if (gameState !== GAME_STATE.PLAYING) return;
   camera.move(dt);
   monster.update(dt);
   key.checkCatch();
   door.checkWin();
+}
+
+function startGame() {
+  gameState = GAME_STATE.PLAYING;
+  document.getElementById("menu").style.display = "none";
+  document.getElementById("glcanvas1").requestPointerLock();
+}
+
+function returnMenu() {
+  gameState = GAME_STATE.MENU;
+
+  document.getElementById("pauseMenu").style.display = "none";
+  document.getElementById("menu").style.display = "flex";
+
+  document.exitPointerLock();
+}
+
+function openInstructions() {
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("instructionsPanel").classList.remove("hidden");
+}
+
+function closeInstructions() {
+  document.getElementById("instructionsPanel").classList.add("hidden");
+  document.getElementById("menu").classList.remove("hidden");
+  document.getElementById("menu").classList.add("flex");
+}
+
+function leaveGame() {
+  if (confirm("Deseja reiniciar o jogo?")) {
+    location.reload();
+  }
 }
 
 function render() {
@@ -74,4 +114,20 @@ function checkCollision(cx, cz, radius, wall) {
   var dx = cx - nearX;
   var dz = cz - nearZ;
   return dx * dx + dz * dz < radius * radius;
+}
+
+function setupMenuButtons() {
+  const playBtn = document.getElementById("button-play");
+  const instrBtn = document.getElementById("button-menu");
+  const exitBtn = document.getElementById("button-exit");
+  const restartBtn = document.getElementById("btnRestart");
+  const nextBtn = document.getElementById("btnNext");
+  const goToMenuBtn = document.getElementById("back-to-menu-button");
+
+  if (playBtn) playBtn.addEventListener("click", startGame);
+  if (instrBtn) instrBtn.addEventListener("click", openInstructions);
+  if (exitBtn) exitBtn.addEventListener("click", leaveGame);
+  if (goToMenuBtn) goToMenuBtn.addEventListener("click", closeInstructions);
+  if (restartBtn) restartBtn.addEventListener("click", () => location.reload());
+  if (nextBtn) nextBtn.addEventListener("click", () => location.reload());
 }
