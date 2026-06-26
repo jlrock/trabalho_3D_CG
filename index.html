@@ -90,18 +90,32 @@
 
     <div id="gameOverScreen" class="overlay-screen hidden">
       <h1>GAME OVER</h1>
-      <p>O Tung Tung Sahur te pegou!</p>
-      <button id="btnRestart">Tentar Novamente</button>
+      <p>You've been caught by Tung Tung Sahur</p>
+      <button id="btnRestart">Back to menu</button>
     </div>
 
     <div id="victoryScreen" class="overlay-screen hidden">
-      <h1>VITÓRIA!</h1>
-      <p>Você escapou do Tung Tung Sahur!</p>
-      <button id="btnNext">Jogar Novamente</button>
+      <h1>YOU WON!</h1>
+      <p>You escaped from Tung Tung Sahur!</p>
+      <button id="btnNext">Back to menu</button>
     </div>
 
     <div id="key-item" class="overlay hidden">
       <img src="./assets/images/key_snapshot.png" height="200" />
+    </div>
+
+    <div id="menu" class="overlay-screen">
+      <h1>Escape From Tung Tung Sahur</h1>
+      <button id="button-play">Play</button>
+      <button id="button-menu">Instructions</button>
+      <button id="button-exit">Reload Game</button>
+    </div>
+
+    <div id="instructionsPanel" class="overlay-screen hidden">
+      <h2>Instructions</h2>
+      <p>WASD - Move</p>
+      <p>Mouse - Camera</p>
+      <button id="back-to-menu-button">Back</button>
     </div>
 
     <script src="./scripts/main.js"></script>
