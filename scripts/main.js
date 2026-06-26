@@ -11,6 +11,9 @@ const btnRestart = document.getElementById("btnRestart");
 const btnNext = document.getElementById("btnNext");
 const keyItem = document.getElementById("key-item");
 
+const idleAudio = new Audio("./assets/audios/idle.mp3");
+const chasingAudio = new Audio("./assets/audios/chasing.mp3");
+
 var mapHitboxes = [];
 var keyHitbox = [];
 
@@ -45,12 +48,12 @@ async function init() {
   }
 
   try {
-    var mapHitboxOBJ = await fetch(
-      "./assets/models/backrooms_hitbox.obj",
-    ).then((r) => r.text());
-    mapHitboxes = getHitboxFromOBJ(mapHitboxOBJ);
-    var keyHitboxOBJ = await fetch("./assets/models/key_hitbox.obj").then(
+    var mapHitboxOBJ = await fetch("./assets/models/backrooms_hitbox.obj").then(
       (r) => r.text(),
+    );
+    mapHitboxes = getHitboxFromOBJ(mapHitboxOBJ);
+    var keyHitboxOBJ = await fetch("./assets/models/key_hitbox.obj").then((r) =>
+      r.text(),
     );
     keyHitbox = getHitboxFromOBJ(keyHitboxOBJ);
   } catch (e) {

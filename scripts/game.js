@@ -58,6 +58,14 @@ function render() {
   if (isGameOver && !isWin) {
     showGameOver();
   }
+
+  if (monster.state !== "chasing") {
+    idleAudio.play();
+    chasingAudio.pause();
+  } else if (monster.state === "chasing") {
+    idleAudio.pause();
+    chasingAudio.play();
+  }
 }
 
 function checkCollision(cx, cz, radius, wall) {
